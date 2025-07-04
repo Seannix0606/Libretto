@@ -49,6 +49,7 @@ class User extends Authenticatable
 
     /**
      * Check if user's current token has expired
+     * Note: This method is available for utility purposes, but login always generates new tokens
      */
     public function hasValidToken()
     {

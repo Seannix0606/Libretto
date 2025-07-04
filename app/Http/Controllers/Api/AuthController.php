@@ -40,34 +40,18 @@ class AuthController extends Controller
 
         $user = Auth::user();
 
-        // Check if user has a valid (non-expired) token
-        if ($user->hasValidToken()) {
-            // Return existing valid token
-            $token = $user->tokens()->latest()->first();
-            
-            return response()->json([
-                'success' => true,
-                'message' => 'Login successful - existing token is still valid',
-                'user' => $user,
-                'token' => $token->plainTextToken ?? 'Token retrieved',
-                'token_type' => 'Bearer',
-                'expires_at' => $token->created_at->addMinutes(60)->toISOString(),
-                'token_regenerated' => false
-            ]);
-        } else {
-            // Generate new token (this will delete old tokens)
-            $tokenResult = $user->generateNewToken();
-            
-            return response()->json([
-                'success' => true,
-                'message' => 'Login successful - new token generated',
-                'user' => $user,
-                'token' => $tokenResult->plainTextToken,
-                'token_type' => 'Bearer',
-                'expires_at' => now()->addMinutes(60)->toISOString(),
-                'token_regenerated' => true
-            ]);
-        }
+        // Always generate a new token on login (delete old tokens and create new one)
+        $tokenResult = $user->generateNewToken();
+        
+        return response()->json([
+            'success' => true,
+            'message' => 'Login successful - new token generated',
+            'user' => $user,
+            'token' => $tokenResult->plainTextToken,
+            'token_type' => 'Bearer',
+            'expires_at' => now()->addMinutes(60)->toISOString(),
+            'token_regenerated' => true
+        ]);
     }
 
     /**
@@ -122,22 +106,13 @@ class AuthController extends Controller
     }
 
     /**
-     * Refresh Token - Generate new token if current one is expired
+     * Refresh Token - Always generate a new token
      */
     public function refreshToken(Request $request)
     {
         $user = $request->user();
 
-        if ($user->hasValidToken()) {
-            return response()->json([
-                'success' => true,
-                'message' => 'Current token is still valid',
-                'token_regenerated' => false,
-                'expires_at' => $user->tokens()->latest()->first()->created_at->addMinutes(60)->toISOString()
-            ]);
-        }
-
-        // Generate new token
+        // Always generate a new token on refresh (delete old tokens and create new one)
         $tokenResult = $user->generateNewToken();
 
         return response()->json([
