@@ -58,8 +58,8 @@ class User extends Authenticatable
             return false;
         }
 
-        // Check if token is expired (24 hours = 1440 minutes)
-        $expirationTime = $token->created_at->addDay();
+        // Check if token is expired (60 minutes)
+        $expirationTime = $token->created_at->addMinutes(60);
         return now()->lessThan($expirationTime);
     }
 
@@ -71,7 +71,7 @@ class User extends Authenticatable
         // Delete all existing tokens
         $this->tokens()->delete();
         
-        // Create a new token that expires in 24 hours
-        return $this->createToken('libretto-token', ['*'], now()->addDay());
+        // Create a new token that expires in 60 minutes
+        return $this->createToken('libretto-token', ['*'], now()->addMinutes(60));
     }
 }
