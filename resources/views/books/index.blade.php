@@ -25,7 +25,10 @@
     <div class="container">
         <div class="header">
             <h1>All Books</h1>
-            <a href="{{ route('books.create') }}" class="btn btn-success">Add Book</a>
+            <div>
+                <a href="{{ route('dashboard') }}" class="btn btn-secondary">← Back to Dashboard</a>
+                <a href="{{ route('books.create') }}" class="btn btn-success">Add Book</a>
+            </div>
         </div>
         @if(session('success'))
             <div class="success-message">
@@ -39,6 +42,7 @@
                         <th>Title</th>
                         <th>Author</th>
                         <th>Genres</th>
+                        <th>Rating</th>
                         <th>Actions</th>
                     </tr>
                 </thead>
@@ -53,7 +57,16 @@
                             @endforeach
                         </td>
                         <td>
+                            @if($book->reviews->count() > 0)
+                                {{ number_format($book->reviews->avg('rating'), 1) }}/5 ⭐
+                                <small>({{ $book->reviews->count() }} reviews)</small>
+                            @else
+                                <span style="color: #666;">No reviews</span>
+                            @endif
+                        </td>
+                        <td>
                             <a href="{{ route('books.show', $book) }}" class="btn btn-primary">View</a>
+                            <a href="{{ route('reviews.create', $book) }}" class="btn btn-success">Add Review</a>
                             <a href="{{ route('books.edit', $book) }}" class="btn btn-warning">Edit</a>
                             <form action="{{ route('books.destroy', $book) }}" method="POST" style="display:inline;">
                                 @csrf

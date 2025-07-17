@@ -23,6 +23,7 @@
         .nav { margin-bottom: 20px; }
         .nav a { margin-right: 15px; }
         .actions { margin-top: 20px; }
+        .success-message { background: #d4edda; color: #155724; padding: 10px; border-radius: 4px; margin-bottom: 20px; }
     </style>
 </head>
 <body>
@@ -30,6 +31,12 @@
         <div class="nav">
             <a href="{{ route('books.index') }}">← Back to Books</a>
         </div>
+        
+        @if(session('success'))
+            <div class="success-message">
+                {{ session('success') }}
+            </div>
+        @endif
 
         <div class="book-details">
             <div class="book-title">{{ $book->title }}</div>
@@ -48,15 +55,19 @@
 
             <div class="section">
                 <div class="section-title">Reviews ({{ $book->reviews->count() }})</div>
+                <div style="margin-bottom: 15px;">
+                    <a href="{{ route('reviews.create', $book) }}" class="btn btn-primary">Add Review</a>
+                </div>
                 @if($book->reviews->count() > 0)
                     @foreach($book->reviews as $review)
                         <div class="review">
-                            <div class="rating">Rating: {{ $review->rating }}/5</div>
+                            <div class="rating">Rating: {{ $review->rating }}/5 ⭐</div>
                             <div>{{ $review->content }}</div>
+                            <small style="color: #666;">{{ $review->created_at->diffForHumans() }}</small>
                         </div>
                     @endforeach
                 @else
-                    <p>No reviews yet</p>
+                    <p>No reviews yet. Be the first to add a review!</p>
                 @endif
             </div>
 

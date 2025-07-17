@@ -6,6 +6,7 @@ use App\Http\Controllers\AuthorController;
 use App\Http\Controllers\GenreController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\ReviewController;
 
 // Authentication routes (public)
 Route::get('/login', [AuthController::class, 'showLogin'])->name('login');
@@ -26,4 +27,9 @@ Route::middleware('auth')->group(function () {
     Route::resource('authors', AuthorController::class);
     Route::resource('genres', GenreController::class);
     Route::get('/relationships', [BookController::class, 'relationships'])->name('relationships');
+    
+    // Review routes
+    Route::get('/books/{book}/reviews/create', [ReviewController::class, 'create'])->name('reviews.create');
+    Route::post('/books/{book}/reviews', [ReviewController::class, 'store'])->name('reviews.store');
+    Route::delete('/reviews/{review}', [ReviewController::class, 'destroy'])->name('reviews.destroy');
 });

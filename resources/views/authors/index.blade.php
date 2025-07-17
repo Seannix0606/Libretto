@@ -24,7 +24,10 @@
     <div class="container">
         <div class="header">
             <h1>All Authors</h1>
-            <a href="{{ route('authors.create') }}" class="btn btn-success">Add Author</a>
+            <div>
+                <a href="{{ route('dashboard') }}" class="btn btn-secondary">← Back to Dashboard</a>
+                <a href="{{ route('authors.create') }}" class="btn btn-success">Add Author</a>
+            </div>
         </div>
         @if(session('success'))
             <div class="success-message">
